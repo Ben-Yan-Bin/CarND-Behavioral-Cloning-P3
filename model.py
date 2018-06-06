@@ -4,7 +4,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 lines = []
-with open('C:/binyan/Udacity/self_driving_car/data/driving_log.csv') as csvfile:
+with open('../data/driving_log.csv') as csvfile:
     reader = csv.reader(csvfile)
     for line in reader:
         lines.append(line)
@@ -16,7 +16,7 @@ for line in lines:
     if 0 < count:
         source_path = line[0]
         filename = source_path.split('/')[-1]
-        current_path = 'C:/binyan/Udacity/self_driving_car/data/IMG/' + filename
+        current_path = '../data/IMG/' + filename
         print(count, end=', ')
         image = cv2.imread(current_path)
         images.append(image)
