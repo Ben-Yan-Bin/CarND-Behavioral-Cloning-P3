@@ -51,19 +51,19 @@ The model.py file contains the code for training and saving the convolution neur
 
 #### 1. An appropriate model architecture has been employed
 
-My model consists of a convolution neural network with 3x3 filter sizes and depths between 32 and 128 (model.py lines 18-24) 
+My model consists of a convolution neural network which is derived from AlexNet, with several convolutional layers and added with several fully connected layers. The output is a Dense(1) layer to predict the steering angle for each image. 
 
-The model includes RELU layers to introduce nonlinearity (code line 20), and the data is normalized in the model using a Keras lambda layer (code line 18). 
+The model includes RELU layers to introduce nonlinearity, and the data is normalized in the model using a Keras lambda layer. Also, at the very beginning of the network, 2D Crop layer is added, to cut off the unnecessary information on top and bottom of the images to let the NN more focus on the road.
 
 #### 2. Attempts to reduce overfitting in the model
 
-The model contains dropout layers in order to reduce overfitting (model.py lines 21). 
+The model contains Batch Normalization layer of Keras to reduce overfitting. 
 
-The model was trained and validated on different data sets to ensure that the model was not overfitting (code line 10-16). The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
+The training data were splitted by 9:1 as trained and validated data sets to validate the loss was reduced along the way of the training. In the Keras fit function, a callback function was called at each end of the epoch based on the valication loss value, and to save the model when there is a better validation value generated. The model was tested by running it through the simulator and ensuring that the vehicle could stay on the track.
 
 #### 3. Model parameter tuning
 
-The model used an adam optimizer, so the learning rate was not tuned manually (model.py line 25).
+The model used an adam optimizer. The epoch was set to be large since callback function was used to save model with good validation result at each end of epoch
 
 #### 4. Appropriate training data
 
