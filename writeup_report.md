@@ -67,60 +67,34 @@ The model used an adam optimizer. The epoch was set to be large since callback f
 
 #### 4. Appropriate training data
 
-Training data was chosen to keep the vehicle driving on the road. I used a combination of center lane driving, recovering from the left and right sides of the road ... 
-
-For details about how I created the training data, see the next section. 
+I found the default data in the project can work quite well when I first try, then I just do some more data augmentation and use left, right images to make the date more sufficient, and it works.
 
 ### Model Architecture and Training Strategy
 
 #### 1. Solution Design Approach
 
-The overall strategy for deriving a model architecture was to ...
+Since Alexnet is was very successful for imagenet, and not too complex, I decided to give it a try, and also I added some more small fully connected layers to the top of the net.   
+I think the track images are not complicated, and think Alexnet is sophisticated enough to recognize the images, and to learn the steering angles.
 
-My first step was to use a convolution neural network model similar to the ... I thought this model might be appropriate because ...
+At the beginning of the training, the training set loss dropped quickly, and I assume the Alexnet-like NN is good enough for this case.
+When I had test with the first version of the model, the car was much better than I thought, and drove to the bridge but stuck there off the road.   
+Also the validation loss was higher than training loss after several epochs that I realized overfitting problem.
+Then I added batch normalization at the end of each conv layer to reduce overfitting.
 
-In order to gauge how well the model was working, I split my image and steering angle data into a training and validation set. I found that my first model had a low mean squared error on the training set but a high mean squared error on the validation set. This implied that the model was overfitting. 
-
-To combat the overfitting, I modified the model so that ...
-
-Then I ... 
-
-The final step was to run the simulator to see how well the car was driving around track one. There were a few spots where the vehicle fell off the track... to improve the driving behavior in these cases, I ....
-
-At the end of the process, the vehicle is able to drive autonomously around the track without leaving the road.
 
 #### 2. Final Model Architecture
 
-The final model architecture (model.py lines 18-24) consisted of a convolution neural network with the following layers and layer sizes ...
+The final model architecture is totally based on Alexnet, addtionally with 2D crop, Lambda, on the bottom, Batch normalization for each conv layer, and 3 more Dense layer on the top with Dense(1) as output. 
 
-Here is a visualization of the architecture (note: visualizing the architecture is optional according to the project rubric)
-
-![alt text][image1]
+Detailed model arch see model.summary() output.
 
 #### 3. Creation of the Training Set & Training Process
 
-To capture good driving behavior, I first recorded two laps on track one using center lane driving. Here is an example image of center lane driving:
-
-![alt text][image2]
-
-I then recorded the vehicle recovering from the left side and right sides of the road back to center so that the vehicle would learn to .... These images show what a recovery looks like starting from ... :
-
-![alt text][image3]
-![alt text][image4]
-![alt text][image5]
-
-Then I repeated this process on track two in order to get more data points.
-
-To augment the data sat, I also flipped images and angles thinking that this would ... For example, here is an image that has then been flipped:
-
-![alt text][image6]
-![alt text][image7]
-
-Etc ....
-
-After the collection process, I had X number of data points. I then preprocessed this data by ...
-
-
-I finally randomly shuffled the data set and put Y% of the data into a validation set. 
-
-I used this training data for training the model. The validation set helped determine if the model was over or under fitting. The ideal number of epochs was Z as evidenced by ... I used an adam optimizer so that manually training the learning rate wasn't necessary.
+I first pick 10% of the dataset as validation in the final training since I think the dataset is already big enough (7-8K), and 10% out of it can make a reliable validation.    
+And I flipped the images and steering angle to help make it more generalized.  
+   
+The model went well in the straight lines, and easy turns at first few tries, but could not get through the hard corners to make proper turns and also did not do well to recover from side of the road to the center.   
+   
+Then I used the left and right images, I think they could help model to learn how to pass the corner and recover from side of the road because the images from the left camera and right camera is more sided to the road than the center images, and I used the as 0.05 correction of steering for left and right images, don't want to make it too much because I think the sided images are not so different than the center images.   
+   
+Also, finally I used the fatest mode of the simulator to test, and the result is good enough to make full laps without getting off the road.
