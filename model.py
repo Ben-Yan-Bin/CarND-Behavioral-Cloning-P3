@@ -11,6 +11,7 @@ from keras.callbacks import ModelCheckpoint, TensorBoard
 
 %matplotlib inline
 
+# parameters
 version = 'v006'
 verbose = 2
 epoch = 100
@@ -30,48 +31,55 @@ for line in lines:
         source_path = line[0]
         filename = source_path.split('/')[-1]
         current_path = './data/IMG/' + filename
+        # get the path for left and right pictures
         left_path = current_path.replace('center', 'left')
         right_path = current_path.replace('center', 'right')
 #         print(current_path)
 #         print(left_path)
 #         print(right_path)
         
+        # center image
         image = cv2.imread(current_path)
         image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
         images.append(image)
         measure = float(line[3])
         measures.append(measure)
         
+        # flipped center image
         image_flipped = np.fliplr(image)
         images.append(image_flipped)
         measure_flipped = - measure
         measures.append(measure_flipped)
         
+        # steering for left and right images
         measure_left = measure + correction
         measure_right = measure - correction
 
+        # left image
         image_left = cv2.imread(left_path)
         image_left = cv2.cvtColor(image_left, cv2.COLOR_BGR2RGB)
         images.append(image_left)
         measures.append(measure_left)
-
+        
+        # flipped left image
         image_left_flipped = np.fliplr(image_left)
         images.append(image_left_flipped)
         measure_left_flipped = - measure_left
         measures.append(measure_left_flipped)
 
+        # right image
         image_right = cv2.imread(right_path)
         image_right = cv2.cvtColor(image_right, cv2.COLOR_BGR2RGB)
         images.append(image_right)
         measures.append(measure_right)
 
+        # flipped right image
         image_right_flipped = np.fliplr(image_right)
         images.append(image_right_flipped)
         measure_right_flipped = - measure_right
         measures.append(measure_right_flipped)
         
-
-        
+        # print out progress
         if count % 1000 == 0:
             print(count, measure, measure_flipped,
                   measure_left, measure_left_flipped,
@@ -82,6 +90,7 @@ X_train = np.array(images)
 y_train = np.array(measures)
 print("Images loading done.")
 
+# show example images
 plt.figure(figsize=(6, 16))
 plt.subplot(611)
 plt.imshow(images[0])
@@ -96,6 +105,7 @@ plt.imshow(images[4])
 plt.subplot(616)
 plt.imshow(images[5])
 
+# checkpoint to save model with better validation loss
 checkpoint = ModelCheckpoint(
     version+'_E{epoch:003d}_L{val_loss:.4f}.h5', 
     monitor='val_loss', verbose=verbose, 
@@ -106,6 +116,7 @@ checkpoint = ModelCheckpoint(
 seed = 7
 np.random.seed(seed)
 
+# Alexnet based NN, added with cropping, lambda, BN, FC
 model = Sequential()
 model.add(Cropping2D(cropping=((50,20), (0,0)), input_shape=(160, 320, 3)))
 model.add(Lambda(lambda x: x / 255. - .5))
