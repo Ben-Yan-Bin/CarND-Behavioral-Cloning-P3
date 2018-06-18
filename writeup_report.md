@@ -87,7 +87,7 @@ Then I added batch normalization at the end of each conv layer to reduce overfit
 The final model architecture is totally based on Alexnet, addtionally with 2D crop, Lambda, on the bottom, Batch normalization for each conv layer, and 3 more Dense layer on the top with Dense(1) as output. 
 
 Detailed model arch :   
-'''sh
+```sh
 _________________________________________________________________
 Layer (type)                 Output Shape              Param #   
 =================================================================
@@ -133,7 +133,7 @@ Total params: 4,023,297
 Trainable params: 4,020,545
 Non-trainable params: 2,752
 _________________________________________________________________
-'''
+```
 
 #### 3. Creation of the Training Set & Training Process
 
